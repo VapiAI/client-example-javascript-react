@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ScrollArea } from "@/components/ui/ScrollArea";
+import { VapiButton, vapi } from "./features/Assistant";
+import { MessageList } from "./features/Messages";
+import { useVapi } from "./features/Assistant";
+import { CharacterPreview } from "./features/Character";
+import { useEffect, useRef } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const scrollAreaRef = useRef<any>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    const viewport = viewportRef.current;
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight;
+    }
+  };
+  const { toggleCall, messages, callStatus, activeTranscript, audioLevel } =
+    useVapi();
+
+  useEffect(() => {
+    vapi.on("message", scrollToBottom);
+    return () => {
+      vapi.off("message", scrollToBottom);
+    };
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main className="flex h-screen">
+      <CharacterPreview />
+      <div
+        id="card"
+        className="text-slate-950 dark:text-slate-50 w-full relative"
+      >
+        {/* <div
+          id="card-header"
+          className="flex flex-col space-y-1.5 p-6 shadow pb-4"
+        ></div> */}
+        <div id="card-content" className="p-6 pt-0">
+          <ScrollArea
+            ref={scrollAreaRef}
+            viewportRef={viewportRef}
+            className="h-[90vh] flex flex-1 p-4"
+          >
+            <div className="flex flex-1 flex-col min-h-[85vh] justify-end">
+              <MessageList
+                messages={messages}
+                activeTranscript={activeTranscript}
+              />
+            </div>
+          </ScrollArea>
+        </div>
+        <div
+          id="card-footer"
+          className="flex justify-center absolute bottom-0 left-0 right-0 py-4"
+        >
+          <VapiButton
+            audioLevel={audioLevel}
+            callStatus={callStatus}
+            toggleCall={toggleCall}
+          />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </main>
+  );
 }
 
-export default App
+export default App;
