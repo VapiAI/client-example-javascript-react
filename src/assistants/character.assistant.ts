@@ -59,7 +59,7 @@ export const characterAssistant: CreateAssistantDTO = {
             inspiration: {
               type: "string",
               description:
-                "Based on the user query, this defines the inspiration that the author is looking for. It could be some kind of similarity or something else as well.",
+                "Based on the user query, this defines the inspiration that the author is looking for. It could be some kind of similarity or something else as well. It should be detailed.",
             },
           },
         },
