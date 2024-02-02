@@ -6,11 +6,7 @@ import { vapi } from "../Assistant";
 function CharacterDetails() {
   const [characterDetails, setCharacterDetails] = React.useState<
     Record<string, string>
-  >({
-    name: "John Doe",
-    "personality traits":
-      "Mysterious, Intelligent, Smart, Ruthless, Cunning, Manipulative.",
-  });
+  >({});
 
   const [editKey, setEditKey] = React.useState<string | null>(null);
   const [editValue, setEditValue] = React.useState<string>("");
